@@ -1,21 +1,26 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 const app = express();
 
 const FoodModel = require('./models/Food')
 
 app.use(express.json());
+app.use(cors());
 
-mongoose.connect('mongodb+srv://doug:blah@cluster0.8yllg.mongodb.net/Food?retryWrites=true&w=majority', {
+mongoose.connect('mongodb+srv://doug:blah@cluster0.8yllg.mongodb.net/food?retryWrites=true&w=majority', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
 
-app.get('/', async (req, res) => {
-    const food = new FoodModel({ foodName: 'Apple', daysSinceIAte: 3 })
+app.post('/insert', async (req, res) => {
+    const foodName = req.body.foodName
+    const days = req.body.days
+    const food = new FoodModel({ foodName: foodName, daysSinceIAte: days })
 
     try {
         await food.save();
+        res.send('inserted data');
     } catch (err) {
         console.log(err)
     }
